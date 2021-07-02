@@ -1,5 +1,6 @@
 const CLIENT_ID = encodeURIComponent("2v1htbe6nf2iw4usw6yktnjaph2cr5");
-const REDIRECT_URI = encodeURIComponent("https://apknencahikclipfbionihmlodbkdglo.chromiumapp.org/");
+const REDIRECT_URI = encodeURIComponent("https://oimepaogbcgppnikhjpefckdaeanakfp.chromiumapp.org/");
+//const REDIRECT_URI = encodeURIComponent("https://apknencahikclipfbionihmlodbkdglo.chromiumapp.org/");
 const RESPONSE_TYPE = encodeURIComponent("token");
 const STATE = encodeURIComponent('meet' + Math.random().toString(36).substring(2, 15));
 
@@ -8,6 +9,14 @@ let is_live = false;
 let ACCESS_TOKEN = document.cookie ? document.cookie.split(';')[0] : null;
 let user_signed_in = !!ACCESS_TOKEN && ACCESS_TOKEN !== 'bruhmoment';
 let interval_id = null;
+let notif_user = false; 
+
+
+// TODO : Mettre un bouton pour activer/désactiver les notifs
+// TODO2 : Changer la périodicité des requêtes de live (1-2 minutes plutôt que toutes les 5 secondes ?)
+// TODO 2.5 : Changer la forme de la présentation des textes sur la popup
+// TODO 2, épisode 2 : Rendre la pop-up plus belle
+
 
 //Création de l'url de demande de token
 function create_twitch_endpoint() {
@@ -23,8 +32,6 @@ function create_twitch_endpoint() {
 `;
 	return openid_url;
 }
-//&scope=${SCOPE}
-//&claims=${CLAIMS}
 
 if (user_signed_in) {
   chrome.browserAction.setPopup({ popup: "./popup-signed-in.html" });
@@ -64,7 +71,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
               }).catch(err => console.log(err))
           }, 3600000);
           chrome.browserAction.setPopup({ popup: "./popup-signed-in.html" }, () => {
-              console.log('bruh')
               sendResponse({ message: "success" });
           })
           const now = new Date()
@@ -98,6 +104,20 @@ const check = async _ => {
       if (read.data && read.data[0].is_live) { // S'il y a stream, changer le texte et l'icone
         is_live = true
         icon = 'green'
+        const game = (read.data[0].game_name) ? read.data[0].game_name : 'Un jeu ?'
+        GAME = game
+        const name = (read.data[0].title) ? read.data[0].title : '(Y a pas de titre askip, dsl)'
+        NAME = name
+        if(notif_user==false){ // Si l'on n'a pas encore envoyé de notif
+          var options = {
+            title: "LIVE du Fatard Club sur : " + GAME,
+            message: NAME,
+            iconUrl: "img/icon_app.png",
+            type: "basic"
+          };
+          chrome.notifications.create('notification_live', options, callback) // On envoie une notif (faut avoir accepté les notif du browser)
+          notif_user = true
+        }
       } else {
         is_live = false
         icon = 'red'
@@ -106,7 +126,11 @@ const check = async _ => {
     
     chrome.browserAction.setIcon({ path: `img/icon_${icon}.png` })
 }
-  
+
+function callback(){
+  console.log('Popup done !')
+}
+
 check() // lancer une fois dès le début
 setInterval(check, 5000) // puis toutes les 5 sec
   
