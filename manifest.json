@@ -1,0 +1,22 @@
+{
+    "manifest_version": 2,
+    "name": "La Noti-Fatard",
+    "description": "Icône colorée = live. Icône grise = pas de live. Basique. Simple.",
+    "version": "6.9.421",
+    "browser_action": {
+        "default_popup": "popup.html"
+    },
+    "icons": {
+        "64" : "img/icon_red.png",
+        "128": "img/icon_app.png"
+    },
+    "background": {
+        "scripts": [
+            "background.js"
+        ]
+    },
+    "permissions": [
+        "identity",
+        "notifications"
+    ]
+}
