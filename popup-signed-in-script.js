@@ -11,6 +11,8 @@ let NAME = ''
 let is_live = false
 
 const check = async _ => {
+  var isChecked=document.getElementById("togNotif").checked;
+  console.log(isChecked)
   const response = await fetch('https://api.twitch.tv/helix/search/channels?query=lefatardclub', {
     method: 'GET',
     headers: {
