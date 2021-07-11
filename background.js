@@ -91,6 +91,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 //Mise à jour des textes (titre, jeu de stream)
 const check = async _ => {
+  
     const response = await fetch('https://api.twitch.tv/helix/search/channels?query=lefatardclub', {
       method: 'GET',
       headers: {
@@ -108,7 +109,8 @@ const check = async _ => {
         GAME = game
         const name = (read.data[0].title) ? read.data[0].title : '(Y a pas de titre askip, dsl)'
         NAME = name
-        if(notif_user==false){ // Si l'on n'a pas encore envoyé de notif
+
+        if(notif_user==false){ // Si l'on n'a pas encore envoyé de notif & user accepte les notifs
           var options = {
             title: "LIVE du Fatard Club sur : " + GAME,
             message: NAME,
